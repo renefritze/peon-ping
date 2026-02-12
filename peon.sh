@@ -45,6 +45,24 @@ play_sound() {
         \$p.Close()
       " &>/dev/null &
       ;;
+    linux)
+      # Try common Linux audio players in order of preference
+      if command -v paplay &>/dev/null; then
+        local pa_vol
+        pa_vol=$(python3 -c "print(int($vol * 65536))")
+        nohup paplay --volume="$pa_vol" "$file" >/dev/null 2>&1 &
+      elif command -v ffplay &>/dev/null; then
+        local ff_vol
+        ff_vol=$(python3 -c "print(int($vol * 100))")
+        nohup ffplay -nodisp -autoexit -volume "$ff_vol" "$file" >/dev/null 2>&1 &
+      elif command -v mpv &>/dev/null; then
+        local mpv_vol
+        mpv_vol=$(python3 -c "print(int($vol * 100))")
+        nohup mpv --no-video --volume="$mpv_vol" "$file" >/dev/null 2>&1 &
+      elif command -v aplay &>/dev/null; then
+        nohup aplay -q "$file" >/dev/null 2>&1 &
+      fi
+      ;;
   esac
 }
 
@@ -107,6 +125,15 @@ APPLESCRIPT
         rm -rf "$slot_dir/slot-$slot"
       ) &
       ;;
+    linux)
+      if command -v notify-send &>/dev/null; then
+        local urgency="normal"
+        case "$color" in
+          red) urgency="critical" ;;
+        esac
+        nohup notify-send --urgency="$urgency" "$title" "$msg" >/dev/null 2>&1 &
+      fi
+      ;;
   esac
 }
 
@@ -123,6 +150,16 @@ terminal_is_focused() {
       ;;
     wsl)
       # Checking Windows focus from WSL adds too much latency; always notify
+      return 1
+      ;;
+    linux)
+      if command -v xdotool &>/dev/null; then
+        local win_name
+        win_name=$(xdotool getactivewindow getwindowname 2>/dev/null || echo "")
+        if [[ "$win_name" =~ (terminal|konsole|alacritty|kitty|wezterm|foot|tilix|gnome-terminal|xterm|xfce4-terminal|sakura|terminator|st|urxvt|ghostty) ]]; then
+          return 0
+        fi
+      fi
       return 1
       ;;
     *)

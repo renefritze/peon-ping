@@ -42,8 +42,8 @@ else
 fi
 
 # --- Prerequisites ---
-if [ "$PLATFORM" != "mac" ] && [ "$PLATFORM" != "wsl" ]; then
-  echo "Error: peon-ping requires macOS or WSL (Windows Subsystem for Linux)"
+if [ "$PLATFORM" != "mac" ] && [ "$PLATFORM" != "wsl" ] && [ "$PLATFORM" != "linux" ]; then
+  echo "Error: peon-ping requires macOS, Linux, or WSL (Windows Subsystem for Linux)"
   exit 1
 fi
 
@@ -65,6 +65,25 @@ elif [ "$PLATFORM" = "wsl" ]; then
   if ! command -v wslpath &>/dev/null; then
     echo "Error: wslpath is required (should be built into WSL)"
     exit 1
+  fi
+elif [ "$PLATFORM" = "linux" ]; then
+  LINUX_PLAYER=""
+  for cmd in paplay ffplay mpv aplay; do
+    if command -v "$cmd" &>/dev/null; then
+      LINUX_PLAYER="$cmd"
+      break
+    fi
+  done
+  if [ -z "$LINUX_PLAYER" ]; then
+    echo "Error: no supported audio player found."
+    echo "Install one of: paplay (pulseaudio-utils), ffplay (ffmpeg), mpv, aplay (alsa-utils)"
+    exit 1
+  fi
+  echo "Audio player: $LINUX_PLAYER"
+  if command -v notify-send &>/dev/null; then
+    echo "Desktop notifications: notify-send"
+  else
+    echo "Warning: notify-send not found (libnotify-bin). Desktop notifications will be disabled."
   fi
 fi
 
@@ -275,6 +294,16 @@ if [ -n "$TEST_SOUND" ]; then
       Start-Sleep -Seconds 3
       \$p.Close()
     " 2>/dev/null
+  elif [ "$PLATFORM" = "linux" ]; then
+    if command -v paplay &>/dev/null; then
+      paplay --volume="$(python3 -c "print(int(0.3 * 65536))")" "$TEST_SOUND" 2>/dev/null
+    elif command -v ffplay &>/dev/null; then
+      ffplay -nodisp -autoexit -volume 30 "$TEST_SOUND" 2>/dev/null
+    elif command -v mpv &>/dev/null; then
+      mpv --no-video --volume=30 "$TEST_SOUND" 2>/dev/null
+    elif command -v aplay &>/dev/null; then
+      aplay -q "$TEST_SOUND" 2>/dev/null
+    fi
   fi
   echo "Sound working!"
 else
