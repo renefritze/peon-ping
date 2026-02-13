@@ -1,0 +1,32 @@
+<idea-plugin>
+    <id>com.peonping.jetbrains</id>
+    <name>Peon Ping</name>
+    <vendor email="hello@peonping.com">PeonPing</vendor>
+
+    <description><![CDATA[
+    Plays peon-ping CESP event sounds inside JetBrains IDEs.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="com.peonping.jetbrains.PeonStartupActivity"/>
+        <notificationGroup id="Peon Ping" displayType="BALLOON" isLogByDefault="false"/>
+    </extensions>
+
+    <actions>
+        <action id="com.peonping.jetbrains.TogglePauseAction"
+                class="com.peonping.jetbrains.actions.TogglePauseAction"
+                text="Peon Ping: Toggle Pause"
+                description="Pause or resume peon-ping sounds"/>
+        <action id="com.peonping.jetbrains.CyclePackAction"
+                class="com.peonping.jetbrains.actions.CyclePackAction"
+                text="Peon Ping: Next Pack"
+                description="Switch to the next installed peon-ping pack"/>
+        <action id="com.peonping.jetbrains.TestCompleteAction"
+                class="com.peonping.jetbrains.actions.TestCompleteAction"
+                text="Peon Ping: Test Task Complete"
+                description="Play a task.complete test sound"/>
+    </actions>
+</idea-plugin>
+

@@ -540,7 +540,7 @@ Requires Node.js 18+. Contributed by [@tag-assistant](https://github.com/tag-ass
 
 ## Multi-IDE Support
 
-peon-ping works with any agentic IDE that supports hooks. Adapters translate IDE-specific events to the [CESP standard](https://github.com/PeonPing/openpeon).
+peon-ping works across multiple agentic IDEs via adapters and plugins that translate IDE-specific events to the [CESP standard](https://github.com/PeonPing/openpeon).
 
 | IDE | Status | Setup |
 |---|---|---|
