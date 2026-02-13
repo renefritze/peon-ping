@@ -143,6 +143,8 @@ class PeonEngine {
 
         private val AI_HINTS = listOf(
             "ai assistant",
+            "jetbrains ai",
+            "jetbrains assistant",
             "assistant",
             "agent",
             "copilot",
@@ -162,6 +164,9 @@ class PeonEngine {
             "approve",
             "approval",
             "allow",
+            "accept changes",
+            "review and apply",
+            "requires approval",
             "requires your input",
             "needs confirmation",
         )
@@ -170,6 +175,7 @@ class PeonEngine {
             "rate limit",
             "quota",
             "resource limit",
+            "usage limit reached",
             "too many requests",
             "token limit",
             "credits",
@@ -180,6 +186,8 @@ class PeonEngine {
             "completed",
             "done",
             "finished",
+            "task finished",
+            "ready for review",
             "generated",
             "resolved",
             "succeeded",
@@ -192,6 +200,9 @@ class PeonEngine {
             "processing",
             "thinking",
             "started",
+            "planning",
+            "analyzing",
+            "implementing",
         )
     }
 
