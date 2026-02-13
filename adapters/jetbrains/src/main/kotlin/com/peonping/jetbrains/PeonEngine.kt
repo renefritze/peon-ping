@@ -368,13 +368,13 @@ class PeonEngine {
                     val windowsPath = soundPath.toString().replace("/", "\\\\")
                     val script = """
                         Add-Type -AssemblyName PresentationCore
-                        \$p = New-Object System.Windows.Media.MediaPlayer
-                        \$p.Open([Uri]::new('file:///$windowsPath'))
-                        \$p.Volume = $volume
+                        ${'$'}p = New-Object System.Windows.Media.MediaPlayer
+                        ${'$'}p.Open([Uri]::new('file:///$windowsPath'))
+                        ${'$'}p.Volume = $volume
                         Start-Sleep -Milliseconds 200
-                        \$p.Play()
+                        ${'$'}p.Play()
                         Start-Sleep -Seconds 3
-                        \$p.Close()
+                        ${'$'}p.Close()
                     """.trimIndent()
                     playWithCommand(
                         listOf("powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script),
