@@ -29,7 +29,15 @@ case "$WINDSURF_EVENT" in
     EVENT="Stop"
     ;;
   pre_user_prompt)
-    EVENT="UserPromptSubmit"
+    # First prompt in a session → SessionStart (greeting); subsequent → UserPromptSubmit (spam detection)
+    SESSION_MARKER="$PEON_DIR/.windsurf-session-${PPID:-$$}"
+    find "$PEON_DIR" -name ".windsurf-session-*" -mtime +0 -delete 2>/dev/null
+    if [ ! -f "$SESSION_MARKER" ]; then
+      touch "$SESSION_MARKER"
+      EVENT="SessionStart"
+    else
+      EVENT="UserPromptSubmit"
+    fi
     ;;
   post_write_code)
     EVENT="Stop"

@@ -29,6 +29,15 @@ run_windsurf() {
 }
 
 # ============================================================
+# Syntax validation
+# ============================================================
+
+@test "adapter script has valid bash syntax" {
+  run bash -n "$WINDSURF_SH"
+  [ "$status" -eq 0 ]
+}
+
+# ============================================================
 # Event mapping
 # ============================================================
 
@@ -56,10 +65,21 @@ run_windsurf() {
   [[ "$sound" == *"/packs/peon/sounds/Done"* ]]
 }
 
-@test "pre_user_prompt maps to UserPromptSubmit" {
+@test "first pre_user_prompt maps to SessionStart and plays greeting" {
   run_windsurf pre_user_prompt
   [ "$WINDSURF_EXIT" -eq 0 ]
-  # UserPromptSubmit does not play sound normally (only on spam)
+  afplay_was_called
+  sound=$(afplay_sound)
+  [[ "$sound" == *"/packs/peon/sounds/Hello"* ]]
+}
+
+@test "subsequent pre_user_prompt maps to UserPromptSubmit" {
+  # First call creates session marker (SessionStart)
+  run_windsurf pre_user_prompt
+  # Second call is UserPromptSubmit — no sound normally
+  rm -f "$TEST_DIR/afplay.log"
+  run_windsurf pre_user_prompt
+  [ "$WINDSURF_EXIT" -eq 0 ]
   ! afplay_was_called
 }
 
@@ -108,8 +128,12 @@ JSON
 # ============================================================
 
 @test "rapid Windsurf prompts trigger annoyed sound" {
-  # Adapter uses PPID for session_id, which is stable across invocations
-  # within the same shell, so spam detection works through the adapter.
+  # First pre_user_prompt is SessionStart (creates marker).
+  run_windsurf pre_user_prompt
+  # peon.sh suppresses sounds within 3s of SessionStart (session replay protection).
+  # Wait past the suppression window before sending rapid prompts.
+  sleep 3
+  rm -f "$TEST_DIR/afplay.log"
   for i in $(seq 1 3); do
     run_windsurf pre_user_prompt
   done
