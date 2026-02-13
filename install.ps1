@@ -624,6 +624,23 @@ if (Test-Path $skillsSourceDir) {
     Write-Host "  Skills installed" -ForegroundColor Green
 }
 
+# --- Install uninstall script ---
+$uninstallSource = Join-Path $PSScriptRoot "uninstall.ps1"
+$uninstallTarget = Join-Path $InstallDir "uninstall.ps1"
+
+if (Test-Path $uninstallSource) {
+    # Local install: copy from repo
+    Copy-Item -Path $uninstallSource -Destination $uninstallTarget -Force
+} else {
+    # One-liner install: download from GitHub
+    $uninstallUrl = "$RepoBase/uninstall.ps1"
+    try {
+        Invoke-WebRequest -Uri $uninstallUrl -OutFile $uninstallTarget -UseBasicParsing -ErrorAction Stop
+    } catch {
+        Write-Host "  Warning: Could not download uninstall.ps1" -ForegroundColor Yellow
+    }
+}
+
 # --- Test sound ---
 Write-Host ""
 Write-Host "Testing sound..."
