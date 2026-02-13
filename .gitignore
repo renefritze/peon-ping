@@ -11,3 +11,5 @@ social-post.md
 homebrew-tap/
 PLAN-*.md
 checksums.txt
+adapters/jetbrains/.gradle/
+adapters/jetbrains/build/
