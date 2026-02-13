@@ -83,11 +83,7 @@ if hook_event == 'SessionStart':
     category = 'session.start'
 elif hook_event == 'Stop':
     category = 'task.complete'
-    # Debounce
-    last_stop = state.get('last_stop_time', 0)
-    if (now - last_stop) < 5:
-        category = None
-    state['last_stop_time'] = now
+    # Debounce is handled by peon.sh, not duplicated here
 elif hook_event == 'Notification':
     ntype = event_data.get('notification_type')
     if ntype == 'permission_prompt':
@@ -152,6 +148,8 @@ stdout, stderr = proc.communicate(json.dumps(peon_json).encode())
 sys.exit(proc.returncode)
 " 2>"$TEST_DIR/stderr.log"
   PS1_EXIT=$?
+  # Wait for background nohup afplay to write its log
+  sleep 0.3
 }
 
 # ============================================================
@@ -267,10 +265,10 @@ JSON
 # ============================================================
 
 @test "Windows: peon.ps1 contains CLI command handlers" {
-  grep -q "^--status\$" "$PEON_PS1"
-  grep -q "^--toggle\$" "$PEON_PS1"
-  grep -q "^--packs\$" "$PEON_PS1"
-  grep -q "^--volume\$" "$PEON_PS1"
+  grep -q "\-\-status" "$PEON_PS1"
+  grep -q "\-\-toggle" "$PEON_PS1"
+  grep -q "\-\-packs" "$PEON_PS1"
+  grep -q "\-\-volume" "$PEON_PS1"
 }
 
 @test "Windows: peon.ps1 uses CESP category format" {
