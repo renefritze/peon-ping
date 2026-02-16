@@ -17,6 +17,7 @@ import { RickPreview } from "./RickPreview";
 import { MurlocPreview } from "./MurlocPreview";
 import { OcarinaPreview } from "./OcarinaPreview";
 import { AoE2Preview } from "./AoE2Preview";
+import { AomGreekPreview } from "./AomGreekPreview";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -161,6 +162,14 @@ export const RemotionRoot: React.FC = () => {
         id="AoE2Preview"
         component={AoE2Preview}
         durationInFrames={860}
+        fps={30}
+        width={1080}
+        height={1080}
+      />
+      <Composition
+        id="AomGreekPreview"
+        component={AomGreekPreview}
+        durationInFrames={840}
         fps={30}
         width={1080}
         height={1080}
