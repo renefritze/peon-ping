@@ -1,3 +1,8 @@
+## v2.15.1 (2026-03-09)
+
+### Fixed
+- **Overlay themes show wrong status labels** — themed overlays (jarvis, glass, sakura) derived their banner label from notification color alone, causing mismatches: Stop events showed "INPUT REQUIRED", PermissionRequest showed "LIMIT REACHED", and idle prompts showed "LIMIT REACHED". Added a `NOTIFY_TYPE` semantic variable (`complete`/`permission`/`limit`/`idle`/`question`) that flows from `peon.sh` → `notify.sh` → overlay scripts as `argv[10]`, with color-based fallback preserved for relay.sh callers. Closes #342.
+
 # Changelog
 
 ## v2.15.0 (2026-03-06)
